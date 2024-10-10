@@ -60,7 +60,7 @@ always_comb begin : result_calc
             result_ext = port_a & port_b;
 
         OP_PRESET:
-            result_ext = {RESULT_W{1'b1}};
+            result_ext = {RESULT_EXT_W{1'b1}};
 
         default:
             result_ext = 'd0;
@@ -73,33 +73,33 @@ always_comb begin : overflow_calc
     case(sel)
         OP_B_SUB_A:
             begin
-                if ( (-port_a_act_high) > 0 && port_b_act_high > 0 )
-                    overflow = (result < 0) ? 'd1 : 'd0;
+                if ( (-$signed(port_a_act_high)) > 0 && $signed(port_b_act_high) > 0 )
+                    overflow = ($signed(result) < 0) ? 'd1 : 'd0;
 
-                else if ( (-port_a_act_high) < 0 && port_b_act_high < 0 )
-                    overflow = (result > 0) ? 'd1 : 'd0;  
+                else if ( (-$signed(port_a_act_high)) < 0 && $signed(port_b_act_high) < 0 )
+                    overflow = ($signed(result) > 0) ? 'd1 : 'd0;  
 
                 else
                     overflow = 'd0;
             end
         OP_A_SUB_B:
             begin
-                if ( port_a_act_high > 0 && (-port_b_act_high) > 0 )
-                    overflow = (result < 0) ? 'd1 : 'd0;
+                if ( $signed(port_a_act_high) > 0 && (-$signed(port_b_act_high)) > 0 )
+                    overflow = ($signed(result) < 0) ? 'd1 : 'd0;
                 
-                else if ( port_a_act_high < 0 && (-port_b_act_high) < 0 )
-                    overflow = (result > 0) ? 'd1 : 'd0;                    
+                else if ( $signed(port_a_act_high) < 0 && (-$signed(port_b_act_high)) < 0 )
+                    overflow = ($signed(result) > 0) ? 'd1 : 'd0;                    
                 
                 else
                     overflow = 'd0;
             end
         OP_ADD:
             begin
-                if ( (port_a > 0) && (port_b > 0) )
-                    overflow = (result < 0) ? 'd1 : 'd0;
+                if ( ($signed(port_a) > 0) && ($signed(port_b) > 0) )
+                    overflow = ($signed(result) < 0) ? 'd1 : 'd0;
                 
-                else if ( port_a < 0 && port_b < 0 )
-                    overflow = (result > 0) ? 'd1 : 'd0;                    
+                else if ( $signed(port_a) < 0 && $signed(port_b) < 0 )
+                    overflow = ($signed(result) > 0) ? 'd1 : 'd0;                    
                 
                 else
                     overflow = 'd0;
