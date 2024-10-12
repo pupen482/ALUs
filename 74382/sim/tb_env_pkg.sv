@@ -33,7 +33,6 @@ typedef struct packed {
 
 typedef t_outputs t_exp_table[SEL_MAX][INPUTS_CASES_NUM];
 
-
 //-------------------------functions--------------------------
 function logic [TB_OPERAND_W - 1:0] extend_bit (input logic in_bit);
     extend_bit = {TB_OPERAND_W{in_bit}};
@@ -156,7 +155,6 @@ function t_exp_table exp_table();
     end
 endfunction : exp_table
 
-
 //------------------global variables and signals--------------------
 logic [SELECT_W-1:0]    sel;
 logic [TB_RESULT_W-1:0] result   ;
@@ -169,5 +167,11 @@ int                     err_cnt  ;
 
 t_exp_table expected_table = exp_table();
 
+string available_tests[] = 
+{
+"DATASHEET_VECTORS_TEST", 
+"DUMMY_OVF_TEST", 
+"SW_MODEL_COMP_TEST"
+};
 
 endpackage : tb_env_pkg

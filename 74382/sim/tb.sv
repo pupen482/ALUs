@@ -19,6 +19,8 @@ alu_74382 #(
 //--------testcases' tasks includes---------
 `ifdef DATASHEET_VECTORS_TEST
     `include "ds_vectors_tst.sv"
+`elsif DUMMY_OVF_TEST
+    `include "dummy_ovf_test.sv"
 `elsif SW_MODEL_COMP_TEST
 `endif
 
@@ -31,16 +33,28 @@ initial begin
     `ifdef DATASHEET_VECTORS_TEST
         ds_vectors_test();
 
+    `elsif DUMMY_OVF_TEST
+        dummy_ovf_test();
+
     `elsif SW_MODEL_COMP_TEST
         $display(">>>> Software model comparison test start...",);
     
+    `else
+        err_cnt++;
+
+        $display(">>>> There is no such test!");
+        $display("Available tests:");
+        for (int i = 0; i < available_tests.size(); i++) begin
+            $display("%s", available_tests[i]);
+        end
+        $display("\n");
     `endif
 
     $display(">>>>TEST END");
     if (err_cnt)
-        $display(">>>>FAIL");
+        $display(">>>>FAIL\n");
     else
-        $display(">>>>SUCCESS");
+        $display(">>>>SUCCESS\n");
     $finish;
 end
 
