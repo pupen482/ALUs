@@ -9,8 +9,9 @@ endif
 
 VERILATOR = verilator
 VERILATOR_COVERAGE = verilator_coverage
+test_name ?= DATASHEET_VECTORS_TEST
 
-VERILATOR_FLAGS =
+VERILATOR_FLAGS = +incdir+./sim
 # Generate C++ in executable form
 VERILATOR_FLAGS += --binary
 # Optimize
@@ -24,8 +25,12 @@ VERILATOR_FLAGS += --trace
 
 VERILATOR_FLAGS += -Wno-fatal
 
+VERILATOR_FLAGS += +define+$(test_name)
+
+VERILATOR_FLAGS += --top tb
+
 # Input files for Verilator
-VERILATOR_INPUT = sim/tb.sv
+VERILATOR_INPUT = -f file_lists/src.f -f file_lists/tb.f
 
 default: run
 
