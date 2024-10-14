@@ -5,10 +5,6 @@ localparam SEL_MAX          = 2**(SELECT_W) - 1            ;
 localparam INPUTS_NUM       = 3                            ; // port_a, port_b, carry_in
 localparam INPUTS_CASES_NUM = 2**INPUTS_NUM                ;
 
-// convenience constants
-localparam ALL_HIGH         = {TB_OPERAND_W{1'b1}};
-localparam ALL_LOW          = {TB_OPERAND_W{1'b0}};
-
 // inputs cases is a 3bit variable in form of {Cn, An, Bn}
 // inputs' indexes for inputs cases
 localparam PORT_B_IDX = 0;
@@ -17,7 +13,7 @@ localparam CARRY_IDX  = 2;
 
 // software model comparison test
 localparam TB_ALU_CHAIN_W    = alu_74382_pkg::UINT_16_W;
-localparam TB_ALU_W          = TB_OPERAND_W;
+localparam TB_ALU_W          = alu_74382_pkg::ORIG_OPERAND_W;
 localparam TB_ALU_QTY        = TB_ALU_CHAIN_W / TB_ALU_W;
 localparam TEST_VECTOR_SIZE  = 100;
 
@@ -25,9 +21,13 @@ localparam TEST_VECTOR_SIZE  = 100;
 localparam TB_OPERAND_W     = TB_ALU_CHAIN_W;
 localparam TB_RESULT_W      = TB_ALU_CHAIN_W;
 `else
-localparam TB_OPERAND_W     = alu_74382_pkg::ORIG_OPERAND_W;
-localparam TB_RESULT_W      = alu_74382_pkg::ORIG_RESULT_W ;
+localparam TB_OPERAND_W     = TB_ALU_W;
+localparam TB_RESULT_W      = TB_OPERAND_W;
 `endif
+
+// convenience constants
+localparam ALL_HIGH         = {TB_OPERAND_W{1'b1}};
+localparam ALL_LOW          = {TB_OPERAND_W{1'b0}};
 
 localparam FILE_TST_VECTOR   = "tb/tst_vector.txt";
 localparam FILE_PORT_A       = "tb/port_a.txt";
@@ -199,6 +199,8 @@ function t_tst_vector get_test_vector();
     $readmemh(FILE_PORT_CARRY, carry_in);
     $readmemh(FILE_GOLDEN_CARRY, carry_out);
     $readmemh(FILE_GOLDEN_ADD, result);
+
+    // $display("port_a[0] = %d", port_a[0]);
 
     res.port_a = port_a;
     res.port_b = port_b;
