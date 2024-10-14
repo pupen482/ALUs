@@ -1,5 +1,7 @@
 package tb_env_pkg;
 
+`define STRINGIFY(x) `"x`"
+
 //--------------------------tb params-------------------------
 localparam SEL_MAX          = 2**(SELECT_W) - 1            ;
 localparam INPUTS_NUM       = 3                            ; // port_a, port_b, carry_in
@@ -15,7 +17,7 @@ localparam CARRY_IDX  = 2;
 localparam TB_ALU_CHAIN_W    = alu_74382_pkg::UINT_16_W;
 localparam TB_ALU_W          = alu_74382_pkg::ORIG_OPERAND_W;
 localparam TB_ALU_QTY        = TB_ALU_CHAIN_W / TB_ALU_W;
-localparam TEST_VECTOR_SIZE  = 100;
+localparam TEST_VECTOR_SIZE  = `DEF_TEST_VECTOR_SIZE;
 
 `ifdef SW_MODEL_COMP_TEST
 localparam TB_OPERAND_W     = TB_ALU_CHAIN_W;
@@ -25,16 +27,20 @@ localparam TB_OPERAND_W     = TB_ALU_W;
 localparam TB_RESULT_W      = TB_OPERAND_W;
 `endif
 
+`ifdef DEF_SW_TEST_OP
+localparam string SW_TEST_OP = `STRINGIFY(`DEF_SW_TEST_OP);
+`endif
+
 // convenience constants
 localparam ALL_HIGH         = {TB_OPERAND_W{1'b1}};
 localparam ALL_LOW          = {TB_OPERAND_W{1'b0}};
 
-localparam FILE_TST_VECTOR   = "tb/tst_vector.txt";
-localparam FILE_PORT_A       = "tb/port_a.txt";
-localparam FILE_PORT_B       = "tb/port_b.txt";
-localparam FILE_PORT_CARRY   = "tb/carry.txt";
-localparam FILE_GOLDEN_CARRY = "tb/carry_golden.txt";
-localparam FILE_GOLDEN_ADD   = "tb/add_golden.txt";
+localparam FILE_TST_VECTOR    = "tb/tst_vector.txt";
+localparam FILE_PORT_A        = "tb/port_a.txt";
+localparam FILE_PORT_B        = "tb/port_b.txt";
+localparam FILE_PORT_CARRY    = "tb/carry.txt";
+localparam FILE_GOLDEN_CARRY  = "tb/carry_golden.txt";
+localparam FILE_GOLDEN_RESULT = "tb/result_golden.txt";
 
 
 //--------------------------typedefs--------------------------
@@ -198,7 +204,7 @@ function t_tst_vector get_test_vector();
     $readmemh(FILE_PORT_B, port_b);
     $readmemh(FILE_PORT_CARRY, carry_in);
     $readmemh(FILE_GOLDEN_CARRY, carry_out);
-    $readmemh(FILE_GOLDEN_ADD, result);
+    $readmemh(FILE_GOLDEN_RESULT, result);
 
     // $display("port_a[0] = %d", port_a[0]);
 

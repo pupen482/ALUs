@@ -9,7 +9,11 @@ endif
 
 VERILATOR = verilator
 VERILATOR_COVERAGE = verilator_coverage
+
+# default values for tests' defines
 test_name ?= DATASHEET_VECTORS_TEST
+sw_tst_op ?= a+b
+vsize ?= 100
 
 VERILATOR_FLAGS = +incdir+./tb
 # Generate C++ in executable form
@@ -25,7 +29,7 @@ VERILATOR_FLAGS += --trace
 
 VERILATOR_FLAGS += -Wno-fatal
 
-VERILATOR_FLAGS += +define+$(test_name)
+VERILATOR_FLAGS += +define+$(test_name) +define+DEF_SW_TEST_OP=$(sw_tst_op) +define+DEF_TEST_VECTOR_SIZE=$(vsize)
 
 VERILATOR_FLAGS += --top tb
 
@@ -47,6 +51,8 @@ run:
 	@echo "-- RUN ---------------------"
 	@rm -rf logs
 	@mkdir -p logs
+	./tb/generate $(sw_tst_op) $(vsize)
+
 	obj_dir/Vtb
 
 	@echo
@@ -61,4 +67,4 @@ show-config:
 
 maintainer-copy::
 clean mostlyclean distclean maintainer-clean::
-	-rm -rf obj_dir logs *.log *.dmp *.vpd core tb/*.txt *.dat
+	-rm -rf obj_dir logs *.log *.dmp *.vpd core *.txt tb/*.txt *.dat
