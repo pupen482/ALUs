@@ -5,6 +5,9 @@ localparam SELECT_W = 3;
 localparam ORIG_OPERAND_W = 4;
 localparam ORIG_RESULT_W  = 4;
 
+//------------------------alu chain params--------------------
+localparam UINT_16_W = 16;
+
 //--------------------------typedefs--------------------------
 typedef enum logic [SELECT_W - 1:0] {
 	OP_CLEAR = 0,

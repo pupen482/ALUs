@@ -3,6 +3,20 @@ import tb_env_pkg::*;
 
 module tb;
 
+`ifdef SW_MODEL_COMP_TEST
+alu_chain #(
+    .ALU_CHAIN_W(TB_ALU_CHAIN_W),
+    .ALU_W      (TB_ALU_W      )
+) dut_alu_chain (
+    .sel         (sel              ),
+    .ch_carry_in (inputs.carry_in  ),
+    .ch_port_a   (inputs.port_a    ),
+    .ch_port_b   (inputs.port_b    ),
+    .ch_result   (outputs.result   ),
+    .ch_overflow (outputs.overflow ),
+    .ch_carry_out(outputs.carry_out)
+);
+`else
 alu_74382 #(
     .OPERAND_W(TB_OPERAND_W),
     .RESULT_W (TB_RESULT_W )
@@ -15,6 +29,7 @@ alu_74382 #(
     .overflow (outputs.overflow ),
     .carry_out(outputs.carry_out)
 );
+`endif
 
 //--------testcases' tasks includes---------
 `ifdef DATASHEET_VECTORS_TEST
@@ -37,7 +52,7 @@ initial begin
         dummy_ovf_test();
 
     `elsif SW_MODEL_COMP_TEST
-        $display(">>>> Software model comparison test start...",);
+        sw_model_comp_test();
     
     `else
         err_cnt++;

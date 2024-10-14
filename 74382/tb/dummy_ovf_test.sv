@@ -3,6 +3,7 @@ import tb_env_pkg::*;
 
 task dummy_ovf_test;
 begin
+    $display(">>>> Dummy overflow test start...");
     sel = OP_ADD;
 
     inputs.carry_in = 0;

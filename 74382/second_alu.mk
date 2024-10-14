@@ -11,7 +11,7 @@ VERILATOR = verilator
 VERILATOR_COVERAGE = verilator_coverage
 test_name ?= DATASHEET_VECTORS_TEST
 
-VERILATOR_FLAGS = +incdir+./sim
+VERILATOR_FLAGS = +incdir+./tb
 # Generate C++ in executable form
 VERILATOR_FLAGS += --binary
 # Optimize
@@ -28,6 +28,7 @@ VERILATOR_FLAGS += -Wno-fatal
 VERILATOR_FLAGS += +define+$(test_name)
 
 VERILATOR_FLAGS += --top tb
+
 
 # Input files for Verilator
 VERILATOR_INPUT = -f file_lists/src.f -f file_lists/tb.f
@@ -60,4 +61,4 @@ show-config:
 
 maintainer-copy::
 clean mostlyclean distclean maintainer-clean::
-	-rm -rf obj_dir logs *.log *.dmp *.vpd core
+	-rm -rf obj_dir logs *.log *.dmp *.vpd core tb/*.txt *.dat

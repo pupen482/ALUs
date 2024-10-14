@@ -1,3 +1,4 @@
-sim/tb_env_pkg.sv
-sim/tb.sv
-sim/ds_vectors_tst.sv
+tb/tb_env_pkg.sv
+tb/tb.sv
+tb/ds_vectors_tst.sv
+tb/sw_model_comp_test.sv

@@ -1,8 +1,6 @@
 package tb_env_pkg;
 
 //--------------------------tb params-------------------------
-localparam TB_OPERAND_W     = alu_74382_pkg::ORIG_OPERAND_W;
-localparam TB_RESULT_W      = alu_74382_pkg::ORIG_RESULT_W ;
 localparam SEL_MAX          = 2**(SELECT_W) - 1            ;
 localparam INPUTS_NUM       = 3                            ; // port_a, port_b, carry_in
 localparam INPUTS_CASES_NUM = 2**INPUTS_NUM                ;
@@ -16,6 +14,27 @@ localparam ALL_LOW          = {TB_OPERAND_W{1'b0}};
 localparam PORT_B_IDX = 0;
 localparam PORT_A_IDX = 1;
 localparam CARRY_IDX  = 2;
+
+// software model comparison test
+localparam TB_ALU_CHAIN_W    = alu_74382_pkg::UINT_16_W;
+localparam TB_ALU_W          = TB_OPERAND_W;
+localparam TB_ALU_QTY        = TB_ALU_CHAIN_W / TB_ALU_W;
+localparam TEST_VECTOR_SIZE  = 100;
+
+`ifdef SW_MODEL_COMP_TEST
+localparam TB_OPERAND_W     = TB_ALU_CHAIN_W;
+localparam TB_RESULT_W      = TB_ALU_CHAIN_W;
+`else
+localparam TB_OPERAND_W     = alu_74382_pkg::ORIG_OPERAND_W;
+localparam TB_RESULT_W      = alu_74382_pkg::ORIG_RESULT_W ;
+`endif
+
+localparam FILE_TST_VECTOR   = "tb/tst_vector.txt";
+localparam FILE_PORT_A       = "tb/port_a.txt";
+localparam FILE_PORT_B       = "tb/port_b.txt";
+localparam FILE_PORT_CARRY   = "tb/carry.txt";
+localparam FILE_GOLDEN_CARRY = "tb/carry_golden.txt";
+localparam FILE_GOLDEN_ADD   = "tb/add_golden.txt";
 
 
 //--------------------------typedefs--------------------------
@@ -31,7 +50,17 @@ typedef struct packed {
     logic                   carry_out; // LSB
 } t_outputs;
 
+typedef struct {
+    logic                       carry_in[TEST_VECTOR_SIZE] ;
+    logic [TB_ALU_CHAIN_W-1:0]  port_a[TEST_VECTOR_SIZE]   ;
+    logic [TB_ALU_CHAIN_W-1:0]  port_b[TEST_VECTOR_SIZE]   ;
+    logic [TB_ALU_CHAIN_W-1:0]  result[TEST_VECTOR_SIZE]   ;
+    logic                       overflow[TEST_VECTOR_SIZE] ;
+    logic                       carry_out[TEST_VECTOR_SIZE];
+} t_tst_vector;
+
 typedef t_outputs t_exp_table[SEL_MAX][INPUTS_CASES_NUM];
+
 
 //-------------------------functions--------------------------
 function logic [TB_OPERAND_W - 1:0] extend_bit (input logic in_bit);
@@ -155,15 +184,43 @@ function t_exp_table exp_table();
     end
 endfunction : exp_table
 
+
+function t_tst_vector get_test_vector();
+    t_tst_vector res;
+    
+    logic                       carry_in[TEST_VECTOR_SIZE] ;
+    logic [TB_ALU_CHAIN_W-1:0]  port_a[TEST_VECTOR_SIZE]   ;
+    logic [TB_ALU_CHAIN_W-1:0]  port_b[TEST_VECTOR_SIZE]   ;
+    logic [TB_ALU_CHAIN_W-1:0]  result[TEST_VECTOR_SIZE]   ;
+    logic                       carry_out[TEST_VECTOR_SIZE];
+
+    $readmemh(FILE_PORT_A, port_a);
+    $readmemh(FILE_PORT_B, port_b);
+    $readmemh(FILE_PORT_CARRY, carry_in);
+    $readmemh(FILE_GOLDEN_CARRY, carry_out);
+    $readmemh(FILE_GOLDEN_ADD, result);
+
+    res.port_a = port_a;
+    res.port_b = port_b;
+    res.carry_in = carry_in;
+    res.carry_out = carry_out;
+    res.result = result;
+
+    return res;
+endfunction : get_test_vector
+
+
 //------------------global variables and signals--------------------
 logic [SELECT_W-1:0]    sel;
 logic [TB_RESULT_W-1:0] result   ;
 logic                   overflow ;
 logic                   carry_out;
-t_inputs                inputs   ;
-t_outputs               outputs  ;
-t_outputs               exp_out  ;
-int                     err_cnt  ;
+
+t_inputs  inputs;
+t_outputs outputs;
+
+t_outputs exp_out  ;
+int       err_cnt  ;
 
 t_exp_table expected_table = exp_table();
 

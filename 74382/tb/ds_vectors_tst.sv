@@ -23,7 +23,6 @@ begin
                 $display("SEL: %b, IN_CASE: %b - [FAIL]", sel_case[SELECT_W - 1:0], in_case[2:0]);
                 $display("inputs    | sel: %b, port_a:%b, port_b: %b, carry_in: %b", sel, inputs.port_a, inputs.port_b, inputs.carry_in);
                 $display("result    | expected: %b, actual: %b", exp_out.result,    outputs.result);
-                $display("result_ext| %b", tb.dut_alu.result_ext);
                 $display("carry_out | expected: %b, actual: %b", exp_out.carry_out, outputs.carry_out);
                 $display("overflow  | expected: %b, actual: %b", exp_out.overflow,  outputs.overflow);
             end
