@@ -31,11 +31,13 @@ VERILATOR = $(z)/bin/verilator
 VERILATOR_COVERAGE = $(VERILATOR_ROOT)/bin/verilator_coverage
 endif
 
+
+
 ###############################################################################
 # Variables
 ###############################################################################
 
-OUTPUT_DIR       ?= alu_74381
+OUTPUT_DIR       ?= alu_16_bit
 
 VERILATOR_FLAGS ?=
 # Generate C++ in executable form
@@ -64,7 +66,9 @@ VERILATOR_FLAGS += --build -j
 
 VERILATOR_INPUT ?=
 # Input files for Verilator
-VERILATOR_INPUT = alu_74381.v main.cpp
+VERILATOR_INPUT = alu_16_bit.v 
+VERILATOR_INPUT += main.cpp
+VERILATOR_INPUT += ../alu_74381.v 
 
 ######################################################################
 VERILATOR_COV_FLAGS ?=
@@ -92,8 +96,7 @@ run:
 	@echo "-- RUN ---------------------"
 	@rm -rf logs
 	@mkdir -p logs
-	$(OUTPUT_DIR)/Valu_74381
-
+	$(OUTPUT_DIR)/Valu_16_bit 
 	@echo
 	@echo "-- DONE --------------------"
 
